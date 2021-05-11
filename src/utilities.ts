@@ -8,8 +8,9 @@
   interface Set<T> {
     isSuperSet(subSet:Set<any>): boolean;
     isSubSet(superSet: Set<any>): boolean;
+    cartesianProduct(set: Set<any>): Set<any>;
     union(...sets:Set<any>[]): Set<any>;
-    // intersection(...sets:Set<any>[]): boolean;
+    intersection(...sets:Set<any>[]): Set<any>;
     symmetricDifference(...sets:Set<any>[]): Set<any>;
     setDifference(...sets:Set<any>[]): Set<any>;
   }
@@ -46,14 +47,11 @@ Set.prototype.union = function(...sets:Set<any>[] ) :Set<any> {
  * Intersection
  */
 
-// Set.prototype.intersection = function(...sets:Set<any>[] ) :boolean {
-//   const arrOfSets = sets.concat(this)
-//   // // find the smallest set
-//   // const smallestSet = arrOfSets.reduce((acc, curr) => acc.size < curr.size ? acc : curr, { size: Infinity });
-//   console.log(arrOfSets);
-//   // const intersection = [...smallestSet].filter
-//   return true;
-// }
+Set.prototype.intersection = function(...sets:Set<any>[] ) :Set<any> {
+  const arrOfSets = sets.concat(this)
+  const smallestSet = arrOfSets.reduce((acc, curr) => acc.size < curr.size ? acc : curr, this);
+  return new Set([...smallestSet].filter(val => arrOfSets.every((set) => set.has(val))));
+}
 
 
 /**
@@ -79,6 +77,21 @@ Set.prototype.symmetricDifference = function(...sets:Set<any>[] ) :Set<any> {
 Set.prototype.setDifference = function(...sets:Set<any>[] ) :Set<any> {
   const unionOfSets = new Set(sets.reduce((acc:any[], curr:Set<any>) => acc.concat([...curr]), []));
   return new Set([...this].filter(val => !unionOfSets.has(val)));
+}
+
+
+
+/**
+ * cartesianProduct
+ */
+Set.prototype.cartesianProduct = function(set:Set<any>) :Set<any> {
+  return new Set([...this].reduce((acc, val) => {
+    let arr:any[] = [];
+    for(let elem of set){
+     arr.push([val, elem]);
+    }
+    return acc.concat(arr);
+  }, []))
 }
 
 
